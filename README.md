@@ -10,10 +10,10 @@ To install the application locally, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/tourist-bureau.git
+   git clone https://github.com/fpmi-tp2025/tpmp-gr9a-lab4-lab4-karvatskiy-kontsevenko.git
 2. Navigate to the project directory:
    ```bash
-   cd tourist-bureau
+   cd tpmp-gr9a-lab4-lab4-karvatskiy-kontsevenko
 3.Build the project using make:
    ```bash
    make
@@ -21,10 +21,15 @@ To install the application locally, follow these steps:
 *Ensure you have a C/C++ compiler and sqlite3 development libraries installed.*  
 
 ## Usage
+Launch the demo:
+
+   ```bash
+   ./bin/demo
+   ```
 Launch the app:
 
    ```bash
-   ./bin/tourist_bureau
+   ./bin/main
    ```
 Authenticate using provided credentials.
 
