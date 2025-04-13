@@ -8,7 +8,6 @@
 #include <iostream>
 #include <limits>
 #include <vector>
-#include <windows.h>
 
 using std::cin;
 using std::cout;
@@ -179,7 +178,8 @@ void showCrewMenu(sqlite3* db, int crewBusId) {
     };
 }
 int main() {
-    SetConsoleOutputCP(65001);
+    system("chcp 1251");
+    setlocale(LC_ALL, "UTF8");
 
     DatabaseManager& dbManager = DatabaseManager::getInstance();
     if (!dbManager.initialize("tour_agency.db")) {
