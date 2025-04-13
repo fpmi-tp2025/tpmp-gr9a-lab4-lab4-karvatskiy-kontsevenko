@@ -115,7 +115,8 @@ void showAdminMenu(sqlite3* db) {
     };
 }
 
-void showCrewMenu(sqlite3* db, int crewBusId) {
+void showCrewMenu(sqlite3* db, int crewMemberId) {
+    int busId = CrewMember::findById(crewMemberId)->getBusId();
     while (true) {
         printHeader("МЕНЮ ЭКИПАЖА");
         cout << "1. Просмотреть информацию о своем автобусе\n"
@@ -130,7 +131,7 @@ void showCrewMenu(sqlite3* db, int crewBusId) {
 
         switch (choice) {
         case 1: {
-            Bus* bus = Bus::findById(crewBusId);
+            Bus* bus = Bus::findById(busId);
             if (bus) {
                 printHeader("ИНФОРМАЦИЯ ОБ АВТОБУСЕ");
                 cout << "Номер: " << bus->getNumber() << "\n"
@@ -145,7 +146,7 @@ void showCrewMenu(sqlite3* db, int crewBusId) {
         }
         case 2: {
             printHeader("ИНФОРМАЦИЯ ОБ ЭКИПАЖЕ");
-            vector<CrewMember*> crew = CrewMember::findByBusId(crewBusId);
+            vector<CrewMember*> crew = CrewMember::findByBusId(busId);
             for (const auto& member : crew) {
                 cout << "Фамилия: " << member->getLastName() << "\n"
                     << "Категория: " << member->getCategory() << "\n"
@@ -161,7 +162,7 @@ void showCrewMenu(sqlite3* db, int crewBusId) {
             string date;
             getline(cin, date);
 
-            double payment = ReportService::getCrewPaymentByDate(crewBusId, date);
+            double payment = ReportService::getCrewPaymentByDate(busId, date);
             if (payment > 0) {
                 cout << "Начислено: " << payment << " руб." << endl;
             }
@@ -178,7 +179,6 @@ void showCrewMenu(sqlite3* db, int crewBusId) {
     };
 }
 int main() {
-    system("chcp 1251");
     setlocale(LC_ALL, "UTF8");
 
     DatabaseManager& dbManager = DatabaseManager::getInstance();
@@ -211,7 +211,7 @@ int main() {
                 showAdminMenu(db);
             }
             else {
-                showCrewMenu(db, user->getCrewBusId());
+                showCrewMenu(db, user->getCrewMemberId());
             }
 
             delete user;

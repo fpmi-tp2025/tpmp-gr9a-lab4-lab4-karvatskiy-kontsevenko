@@ -10,7 +10,7 @@ Bus* Bus::create(const std::string& number, const std::string& model, double tot
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "INSERT INTO Buses (number, model, totalMileage) VALUES (?, ?, ?);";
+    const char* sql = "INSERT INTO TOURIST_BUREAU_BUSES (number, model, totalMileage) VALUES (?, ?, ?);";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
     };
@@ -34,7 +34,7 @@ Bus* Bus::findById(int id) {
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT number, model, totalMileage FROM Buses WHERE id = ?;";
+    const char* sql = "SELECT number, model, totalMileage FROM TOURIST_BUREAU_BUSES WHERE id = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
     };
@@ -59,7 +59,7 @@ std::vector<Bus*> Bus::getAll() {
     std::vector<Bus*> buses;
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT id, number, model, totalMileage FROM Buses;";
+    const char* sql = "SELECT id, number, model, totalMileage FROM TOURIST_BUREAU_BUSES;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return buses;
     };

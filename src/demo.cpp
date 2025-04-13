@@ -32,16 +32,23 @@ void demoUsers() {
     cout << "ДЕМОНСТРАЦИЯ РАБОТЫ С ПОЛЬЗОВАТЕЛЯМИ" << endl;
     printSeparator();
 
-    User* admin = User::authenticate("admin", "admin123");
+    User* admin = User::create("admin", "12345", "admin", -1);
     if (admin) {
-        cout << "Успешная аутентификация администратора: " << admin->getUsername() << endl;
-        delete admin;
+        cout << "Создан новый пользователь: " << endl;
+        cout << "Имя пользователя: " << admin->getUsername() << endl;
+        cout << "Роль: " << ((admin->getRole() == User::Role::Admin) ? "Администратор" : "член экипажа") << endl;
+    };
+
+    User* validUser = User::authenticate("admin", "12345");
+    if (admin) {
+        cout << "Успешная аутентификация администратора: " << validUser->getUsername() << endl;
+        delete validUser;
     }
     else {
         cout << "Ошибка аутентификации администратора!" << endl;
     };
 
-    User* invalidUser = User::authenticate("admin", "wrongpass");
+    User* invalidUser = User::authenticate("admin", "admin");
     if (!invalidUser) {
         cout << "Неудачная аутентификация (как и ожидалось)" << endl;
     };
@@ -234,7 +241,6 @@ void demoReports() {
 }
 
 int main() {
-    system("chcp 1251");
     setlocale(LC_ALL, "UTF8");
     DatabaseManager& db = DatabaseManager::getInstance();
     if (!db.initialize("tour_agency_demo.db")) {

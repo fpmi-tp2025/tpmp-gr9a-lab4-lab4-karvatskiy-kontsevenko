@@ -12,7 +12,7 @@ Route* Route::create(const std::string& name, const std::string& startPoint,
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "INSERT INTO Routes (name, startPoint, endPoint, distance) VALUES (?, ?, ?, ?);";
+    const char* sql = "INSERT INTO TOURIST_BUREAU_ROUTES (name, startPoint, endPoint, distance) VALUES (?, ?, ?, ?);";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
     };
@@ -37,7 +37,7 @@ Route* Route::findById(int id) {
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT name, startPoint, endPoint, distance FROM Routes WHERE id = ?;";
+    const char* sql = "SELECT name, startPoint, endPoint, distance FROM TOURIST_BUREAU_ROUTES WHERE id = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
     };
@@ -63,7 +63,7 @@ std::vector<Route*> Route::getAll() {
     std::vector<Route*> routes;
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT id, name, startPoint, endPoint, distance FROM Routes;";
+    const char* sql = "SELECT id, name, startPoint, endPoint, distance FROM TOURIST_BUREAU_ROUTES;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return routes;
     };
@@ -88,7 +88,7 @@ std::vector<Trip*> Route::getTrips() const {
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT id, busId, departureDate, arrivalDate, passengersCount, ticketPrice "
-        "FROM Trips WHERE routeName = ?;";
+        "FROM TOURIST_BUREAU_ROUTES WHERE routeName = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return trips;
     };

@@ -13,7 +13,7 @@ Trip* Trip::create(int busId, const std::string& departureDate, const std::strin
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "INSERT INTO Trips (busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice) "
+    const char* sql = "INSERT INTO TOURIST_BUREAU_TRIPS (busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice) "
         "VALUES (?, ?, ?, ?, ?, ?);";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
@@ -42,7 +42,7 @@ std::vector<Trip*> Trip::getAll() {
     std::vector<Trip*> trips;
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT id, busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice FROM Trips;";
+    const char* sql = "SELECT id, busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice FROM TOURIST_BUREAU_TRIPS;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return trips;
     };
@@ -69,7 +69,7 @@ std::vector<Trip*> Trip::findByBusId(int busId) {
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT id, departureDate, arrivalDate, routeName, passengersCount, ticketPrice "
-        "FROM Trips WHERE busId = ?;";
+        "FROM TOURIST_BUREAU_TRIPS WHERE busId = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return trips;
     }
@@ -97,7 +97,7 @@ std::vector<Trip*> Trip::findByDateRange(const std::string& startDate, const std
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT id, busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice "
-        "FROM Trips WHERE departureDate >= ? AND arrivalDate <= ?;";
+        "FROM TOURIST_BUREAU_TRIPS WHERE departureDate >= ? AND arrivalDate <= ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return trips;
     }
