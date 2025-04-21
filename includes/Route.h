@@ -19,6 +19,9 @@ public:
 
     static Route* create(const std::string& name, const std::string& startPoint,
         const std::string& endPoint, double distance);
+    bool update(const std::string& name, const std::string& startPoint,
+        const std::string& endPoint, double distance);
+    bool remove();
     static Route* findById(int id);
     static std::vector<Route*> getAll();
 

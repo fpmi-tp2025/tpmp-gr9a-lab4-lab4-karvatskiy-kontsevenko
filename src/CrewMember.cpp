@@ -15,7 +15,7 @@ CrewMember* CrewMember::create(const std::string& lastName, const std::string& e
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
-    const char* sql = "INSERT INTO CrewMembers (lastName, employeeNumber, experience, category, address, birthYear, busId) "
+    const char* sql = "INSERT INTO TOURIST_BUREAU_CREW_MEMBERS (lastName, employeeNumber, experience, category, address, birthYear, busId) "
         "VALUES (?, ?, ?, ?, ?, ?, ?);";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
@@ -40,12 +40,63 @@ CrewMember* CrewMember::create(const std::string& lastName, const std::string& e
     return new CrewMember(id, lastName, employeeNumber, experience, category, address, birthYear, busId);
 }
 
+bool CrewMember::update(const std::string& lastName, const std::string& employeeNumber,
+    int experience, const std::string& category, const std::string& address,
+    int birthYear, int busId) {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "UPDATE TOURIST_BUREAU_CREW_MEMBERS SET lastName = ?, employeeNumber = ?,"
+        "experience = ?, category = ?, address = ?,"
+        "birthYear = ?, busId = ? WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_text(stmt, 1, lastName.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, employeeNumber.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, experience);
+    sqlite3_bind_text(stmt, 4, category.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, address.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 6, birthYear);
+    sqlite3_bind_int(stmt, 7, busId);
+    sqlite3_bind_int(stmt, 8, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
+bool CrewMember::remove() {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "DELETE FROM TOURIST_BUREAU_CREW_MEMBERS WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
 CrewMember* CrewMember::findById(int id) {
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT lastName, employeeNumber, experience, category, address, birthYear, busId "
-        "FROM CrewMembers WHERE id = ?;";
+        "FROM TOURIST_BUREAU_CREW_MEMBERS WHERE id = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return nullptr;
     }
@@ -75,7 +126,7 @@ std::vector<CrewMember*> CrewMember::findByBusId(int busId) {
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT id, lastName, employeeNumber, experience, category, address, birthYear "
-        "FROM CrewMembers WHERE busId = ?;";
+        "FROM TOURIST_BUREAU_CREW_MEMBERS WHERE busId = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return members;
     }
@@ -104,7 +155,7 @@ std::vector<CrewMember*> CrewMember::getAll() {
     std::vector<CrewMember*> members;
     sqlite3_stmt* stmt;
 
-    const char* sql = "SELECT id, lastName, employeeNumber, experience, category, address, birthYear, busId FROM CrewMembers;";
+    const char* sql = "SELECT id, lastName, employeeNumber, experience, category, address, birthYear, busId FROM TOURIST_BUREAU_CREW_MEMBERS;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return members;
     };

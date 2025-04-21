@@ -11,7 +11,7 @@ std::vector<TripReport> ReportService::getBusTrips(int busId, const std::string&
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT departureDate, arrivalDate, routeName, passengersCount, ticketPrice "
-        "FROM Trips WHERE busId = ? AND departureDate >= ? AND arrivalDate <= ?;";
+        "FROM TOURIST_BUREAU_TRIPS WHERE busId = ? AND departureDate >= ? AND arrivalDate <= ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return reports;
     }
@@ -41,7 +41,7 @@ double ReportService::calculateBusRevenue(int busId, const std::string& startDat
     double revenue = 0.0;
 
     const char* sql = "SELECT SUM(passengersCount * ticketPrice) "
-        "FROM Trips WHERE busId = ? AND departureDate >= ? AND arrivalDate <= ?;";
+        "FROM TOURIST_BUREAU_TRIPS WHERE busId = ? AND departureDate >= ? AND arrivalDate <= ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return revenue;
     }
@@ -64,7 +64,7 @@ std::vector<CrewPayment> ReportService::calculateCrewPayments(double percentage,
     sqlite3_stmt* stmt;
 
     const char* sql = "SELECT busId, SUM(passengersCount * ticketPrice * ?) "
-        "FROM Trips WHERE departureDate >= ? AND arrivalDate <= ? "
+        "FROM TOURIST_BUREAU_TRIPS WHERE departureDate >= ? AND arrivalDate <= ? "
         "GROUP BY busId;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return payments;
@@ -99,7 +99,7 @@ void ReportService::saveCrewPayments(const std::vector<CrewPayment>& payments) {
         std::string endDate = payment.period.substr(sep + 3);
 
         sqlite3_stmt* stmt;
-        const char* sql = "INSERT INTO CrewPayments (busId, amount, paymentDate, periodStart, periodEnd) "
+        const char* sql = "INSERT INTO TOURIST_BUREAU_CREW_PAYMENTS (busId, amount, paymentDate, periodStart, periodEnd) "
             "VALUES (?, ?, date('now'), ?, ?);";
         if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
             continue;
@@ -120,7 +120,7 @@ double ReportService::getCrewPaymentByDate(int busId, const std::string& date) {
     sqlite3_stmt* stmt;
     double amount = 0.0;
 
-    const char* sql = "SELECT amount FROM CrewPayments WHERE busId = ? AND paymentDate = ?;";
+    const char* sql = "SELECT amount FROM TOURIST_BUREAU_CREW_PAYMENTS WHERE busId = ? AND paymentDate = ?;";
     if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
         return amount;
     }

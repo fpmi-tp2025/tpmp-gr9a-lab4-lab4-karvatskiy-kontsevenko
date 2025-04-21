@@ -23,6 +23,10 @@ public:
 
     static Trip* create(int busId, const std::string& departureDate, const std::string& arrivalDate,
         const std::string& routeName, int passengersCount, double ticketPrice);
+    bool update(int busId, const std::string& departureDate, const std::string& arrivalDate,
+        const std::string& routeName, int passengersCount, double ticketPrice);
+    bool remove();
+    static Trip* findById(int id);
     static std::vector<Trip*> findByBusId(int busId);
     static std::vector<Trip*> findByDateRange(const std::string& startDate, const std::string& endDate);
 
