@@ -33,6 +33,51 @@ Route* Route::create(const std::string& name, const std::string& startPoint,
     return new Route(id, name, startPoint, endPoint, distance);
 }
 
+bool Route::update(const std::string& name, const std::string& startPoint,
+    const std::string& endPoint, double distance) {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "UPDATE TOURIST_BUREAU_ROUTES SET name = ?, startPoint = ?, endPoint = ? WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, startPoint.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, endPoint.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 4, distance);
+    sqlite3_bind_int(stmt, 5, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
+bool Route::remove() {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "DELETE FROM TOURIST_BUREAU_ROUTES WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
 Route* Route::findById(int id) {
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;

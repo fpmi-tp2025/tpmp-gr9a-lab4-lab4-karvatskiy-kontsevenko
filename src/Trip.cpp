@@ -37,6 +37,52 @@ Trip* Trip::create(int busId, const std::string& departureDate, const std::strin
     return new Trip(id, busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice);
 }
 
+bool Trip::update(int busId, const std::string& departureDate, const std::string& arrivalDate,
+    const std::string& routeName, int passengersCount, double ticketPrice) {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "UPDATE TOURIST_BUREAU_TRIPS SET busId = ?, departureDate = ?, arrivalDate = ?, routeName = ?, passengersCount = ?, ticketPrice = ? WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_int(stmt, 1, busId);
+    sqlite3_bind_text(stmt, 2, departureDate.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, arrivalDate.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, routeName.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, passengersCount);
+    sqlite3_bind_double(stmt, 6, ticketPrice);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
+bool Trip::remove() {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "DELETE FROM TOURIST_BUREAU_TRIPS WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
 std::vector<Trip*> Trip::getAll() {
     DatabaseManager& db = DatabaseManager::getInstance();
     std::vector<Trip*> trips;
@@ -61,6 +107,36 @@ std::vector<Trip*> Trip::getAll() {
 
     sqlite3_finalize(stmt);
     return trips;
+}
+
+Trip* Trip::findById(int id) {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "SELECT number, model, totalMileage FROM TOURIST_BUREAU_BUSES WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return nullptr;
+    };
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        std::string number = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        std::string model = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        double totalMileage = sqlite3_column_double(stmt, 2);
+        int busId = sqlite3_column_int(stmt, 0);
+        const std::string& departureDate = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        const std::string& arrivalDate = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        const std::string& routeName = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        int passengersCount = sqlite3_column_int(stmt, 4);
+        double ticketPrice = sqlite3_column_double(stmt, 5);
+
+        sqlite3_finalize(stmt);
+        return new Trip(id, busId, departureDate, arrivalDate, routeName, passengersCount, ticketPrice);
+    };
+
+    sqlite3_finalize(stmt);
+    return nullptr;
 }
 
 std::vector<Trip*> Trip::findByBusId(int busId) {

@@ -30,6 +30,49 @@ Bus* Bus::create(const std::string& number, const std::string& model, double tot
     return new Bus(id, number, model, totalMileage);
 }
 
+bool Bus::update(const std::string& number, const std::string& model, double totalMileage) {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "UPDATE TOURIST_BUREAU_BUSES SET number = ?, model = ?, totalMileage = ? WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_text(stmt, 1, number.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, model.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 3, totalMileage);
+    sqlite3_bind_int(stmt, 4, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
+bool Bus::remove() {
+    DatabaseManager& db = DatabaseManager::getInstance();
+    sqlite3_stmt* stmt;
+
+    const char* sql = "DELETE FROM TOURIST_BUREAU_BUSES WHERE id = ?;";
+    if (sqlite3_prepare_v2(db.getDatabase(), sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return false;
+    };
+
+    sqlite3_bind_int(stmt, 1, id);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE) {
+        sqlite3_finalize(stmt);
+        return false;
+    };
+    sqlite3_finalize(stmt);
+
+    return true;
+}
+
 Bus* Bus::findById(int id) {
     DatabaseManager& db = DatabaseManager::getInstance();
     sqlite3_stmt* stmt;

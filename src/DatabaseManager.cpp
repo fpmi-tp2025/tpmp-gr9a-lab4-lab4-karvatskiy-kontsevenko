@@ -11,6 +11,7 @@ bool DatabaseManager::initialize(const std::string& dbPath) {
         std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
         return false;
     }
+	std::cout << "Creating database...\n";
 
     const char* sql =
 

@@ -18,6 +18,8 @@ public:
     void setTotalMileage(double mileage) { totalMileage = mileage; }
 
     static Bus* create(const std::string& number, const std::string& model, double totalMileage);
+    bool update(const std::string& number, const std::string& model, double totalMileage);
+    bool remove();
     static Bus* findById(int id);
     static std::vector<Bus*> getAll();
 

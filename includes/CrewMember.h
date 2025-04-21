@@ -24,6 +24,10 @@ public:
     static CrewMember* create(const std::string& lastName, const std::string& employeeNumber,
         int experience, const std::string& category, const std::string& address,
         int birthYear, int busId);
+    bool update(const std::string& lastName, const std::string& employeeNumber,
+        int experience, const std::string& category, const std::string& address,
+        int birthYear, int busId);
+    bool remove();
     static CrewMember* findById(int id);
     static std::vector<CrewMember*> findByBusId(int busId);
     static std::vector<CrewMember*> getAll();
